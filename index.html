@@ -206,19 +206,25 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
   text-shadow:0 0 12px color-mix(in srgb,var(--accent) 60%,transparent);
 }
 .cap h2{
-  font-size:58px;line-height:1.02;letter-spacing:-.035em;font-weight:900;
+  font-size:56px;line-height:1.02;letter-spacing:-.035em;font-weight:900;
   margin-bottom:18px;color:var(--text);
   display:flex;align-items:center;gap:18px;flex-wrap:nowrap;
+  white-space:nowrap;
 }
 .cap h2 span{
-  flex-shrink:1;
+  flex-shrink:0;
 }
 .cap-logo{
-  height:64px;width:auto;flex-shrink:0;display:block;
+  height:60px;width:auto;flex-shrink:0;display:block;
   filter:drop-shadow(0 0 14px color-mix(in srgb,var(--accent2) 65%,transparent))
          drop-shadow(0 0 30px color-mix(in srgb,var(--accent2) 30%,transparent));
 }
-.cap p{font-size:19px;color:var(--text-muted);line-height:1.5;max-width:520px;font-weight:400}
+/* ═══════ PARAGRAPHS — always ONE LINE ═══════ */
+.cap p{
+  font-size:16px;color:var(--text-muted);line-height:1.5;
+  max-width:none;font-weight:400;
+  white-space:nowrap;
+}
 .cap.in>*{animation:capIn .8s cubic-bezier(.16,1,.3,1) both}
 .cap.in .k{animation-delay:0s}
 .cap.in h2{animation-delay:.08s}
@@ -268,7 +274,6 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
   display:flex;flex-direction:column;
 }
 
-/* ─── Phone header — logo centered, no online count ─── */
 .app-header{
   display:flex;align-items:center;justify-content:center;
   padding:44px 16px 14px;
@@ -584,22 +589,53 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
 #stage[data-ratio=land] .dots{left:78px;bottom:58px}
 
 /* ═══════════════════════════════════════════════════════════════
-   LAYOUT — portrait (centered column)
+   LAYOUT — portrait (centered column, bigger phone)
 ═══════════════════════════════════════════════════════════════ */
 #stage[data-ratio=port] .cap{
   left: 50%;
-  top: 100px;
+  top: 90px;
   width: auto;
-  max-width: calc(100% - 120px);
+  max-width: calc(100% - 60px);
   transform: translateX(-50%);
+  padding-left: 20px;
 }
-#stage[data-ratio=port] .cap h2{font-size:46px;gap:14px}
-#stage[data-ratio=port] .cap-logo{height:50px}
-#stage[data-ratio=port] .cap p{font-size:16px;max-width:520px}
-#stage[data-ratio=port] .phone{left:calc(50% - 163px);top:440px}
+#stage[data-ratio=port] .cap .k{
+  font-size: 12px;
+  letter-spacing: .22em;
+  margin-bottom: 12px;
+}
+#stage[data-ratio=port] .cap h2{
+  font-size: 44px;
+  gap: 12px;
+  margin-bottom: 14px;
+  white-space: nowrap;
+}
+#stage[data-ratio=port] .cap-logo{height: 46px}
+#stage[data-ratio=port] .cap p{
+  font-size: 15px;
+  max-width: none;
+  white-space: nowrap;
+}
+
+#stage[data-ratio=port] .phone{
+  left: calc(50% - 163px);
+  top: 380px;
+  transform-origin: 50% 50%;
+}
+#stage[data-ratio=port][data-mode=app] .phone{
+  transform: scale(1.25);
+}
+#stage[data-ratio=port]:not([data-mode=app]) .phone{
+  transform: translateY(50px) scale(1.15);
+  transform-origin: 50% 50%;
+}
+
 #stage[data-ratio=port] .dots{
-  left:50%;transform:translateX(-50%);bottom:40px;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 40px;
 }
+
 #stage[data-ratio=port] .ov.intro .brand-logo{height:120px;max-width:88%}
 #stage[data-ratio=port] .ov.cta .brand-logo{height:72px}
 #stage[data-ratio=port] .ov.cta h1{font-size:54px}
@@ -790,7 +826,6 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
   const AVATAR_URL = 'https://i.postimg.cc/65mXsgPN/S7f3gmsg-400x400.jpg';
   const PHANTOM_LOGO = 'https://i.postimg.cc/kXtLPZVF/Phanyoms2.png';
 
-  /* ── Themes ── */
   const THEMES = [
     ['original','Original',{
       bg:'#0a0e1a',panel:'#111827',panel2:'#151b2d',input:'#111827',
@@ -839,7 +874,6 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
   const CSS_VARS = ['bg','panel','panel2','input','line','accent','accent2',
                     'text','text-muted','ink','green','red','radius','font-mono'];
 
-  /* ── Scenes — 4th element marks a logo injection ── */
   const SCENES = [
     ['01 · CONNECT','Connect Phantom.','One tap. Your wallet is your identity. No email, no password.', 'phantom'],
     ['02 · CHAT','Talk with real holders.','Live public room. Reply, send images, mods set the cooldown.'],
@@ -851,7 +885,6 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
     ['08 · STREAKS + MODS','Streaks and mod tools.','Daily login streaks, pinned announcements, adjustable cooldowns.']
   ];
 
-  /* ── Stars ── */
   const canvas = $('stars');
   const ctx = canvas.getContext('2d');
   let stars = [];
@@ -887,12 +920,10 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
     requestAnimationFrame(drawStars);
   }
 
-  /* ── Dots ── */
   const dotsEl = $('dots');
   SCENES.forEach(() => dotsEl.appendChild(document.createElement('i')));
   function setDot(i){ [...dotsEl.children].forEach((d, k) => d.classList.toggle('on', k <= i)); }
 
-  /* ── Chips ── */
   const chipsEl = $('chips');
   THEMES.forEach(t => {
     const b = document.createElement('b');
@@ -900,7 +931,6 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
     chipsEl.appendChild(b);
   });
 
-  /* ── Engine ── */
   let events = [], tweens = [], elapsed = 0, last = 0, paused = false, ei = 0;
   function at(t, fn){ events.push({t, fn}); }
   function tw(t, d, fn){ tweens.push({t, d, fn, done: false}); }
@@ -922,7 +952,6 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
     requestAnimationFrame(loop);
   }
 
-  /* ── Helpers ── */
   function setCap(i){
     const c = $('cap');
     c.classList.remove('in');
@@ -998,9 +1027,8 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
     });
   }
 
-  /* ── Rankings ── */
   const RK = [
-    ['kingsol 🐋','4.2M',100],
+    ['BeforeSatoshi 🐋','4.2M',100],
     ['anon_42 🐋','3.1M',74],
     ['whale_9 🐋','2.4M',57],
     ['moonrik 🐋','1.6M',38]
@@ -1044,13 +1072,11 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
     $('rooms').appendChild(d);
   }
 
-  /* ── Timeline ── */
   function build(){
     events = []; tweens = []; ei = 0;
 
     at(0, () => { stage.dataset.mode = 'intro'; setTheme('original'); });
 
-    /* 01 CONNECT */
     at(3800, () => {
       stage.dataset.mode = 'app';
       setCap(0);
@@ -1061,15 +1087,14 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
     });
     at(4500, () => press('phb'));
     at(4900, () => { $('wal').textContent = '✅ 7xKp…9fQ2 connected'; });
-    type('idn', 'kingsol', 5100, 900);
+    type('idn', 'BeforeSatoshi', 5100, 900);
     at(6200, () => {
       $('pfp').classList.add('set');
-      $('pfp').innerHTML = `<img src="${AVATAR_URL}" alt="kingsol">`;
+      $('pfp').innerHTML = `<img src="${AVATAR_URL}" alt="BeforeSatoshi">`;
     });
     at(7000, () => press('joinb'));
-    at(7600, () => toast('Welcome, kingsol 🐋'));
+    at(7600, () => toast('Welcome, BeforeSatoshi 🐋'));
 
-    /* 02 PUBLIC CHAT */
     at(8800, () => {
       setCap(1);
       pane('p-chat');
@@ -1087,11 +1112,10 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
       press('snd');
       $('inp').textContent = 'Message…';
       $('inp').classList.remove('t');
-      msg('kingsol','🐋 Whale','Strong hands only 💪',{me:1});
+      msg('BeforeSatoshi','🐋 Whale','Strong hands only 💪',{me:1});
     });
-    at(14500, () => msg('mati.sol','🐬 Dolphin','this one 👇',{rep:'↳ Replying to kingsol',img:1}));
+    at(14500, () => msg('mati.sol','🐬 Dolphin','this one 👇',{rep:'↳ Replying to BeforeSatoshi',img:1}));
 
-    /* 03 WHALE ROOM */
     at(14900, () => {
       setCap(2);
       tab('wha');
@@ -1101,11 +1125,10 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
     });
     at(15500, () => msg('anon_42','🐋 Whale','whale room is quiet and sharp 🐋',{wh:1}));
     at(16300, () => msg('whale_9','🐋 Whale','big news dropping tonight',{wh:1}));
-    at(17100, () => msg('kingsol','🐋 Whale','in. who is joining the call?',{wh:1,me:1}));
+    at(17100, () => msg('BeforeSatoshi','🐋 Whale','in. who is joining the call?',{wh:1,me:1}));
     at(17900, () => msg('moonrik','🐋 Whale','all in 🙌',{wh:1}));
     at(18700, () => $('pin').classList.add('hot'));
 
-    /* 04 DM */
     at(19900, () => {
       setCap(3);
       tab('pri');
@@ -1114,10 +1137,9 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
       $('pin').textContent = '🔒 Private chat with mati.sol';
     });
     at(20500, () => msg('mati.sol','🐬 Dolphin','hey, saw your card, nice streak'));
-    at(21400, () => msg('kingsol','🐋 Whale','thanks! come to the whale room',{me:1}));
+    at(21400, () => msg('BeforeSatoshi','🐋 Whale','thanks! come to the whale room',{me:1}));
     at(22200, () => msg('mati.sol','🐬 Dolphin','on my way 🚀'));
 
-    /* 05 RANKINGS */
     at(24900, () => {
       setCap(4);
       pane('p-rank');
@@ -1127,7 +1149,6 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
       animateRankBars(25200);
     });
 
-    /* 06 COMMUNITIES */
     at(29900, () => {
       setCap(5);
       pane('p-rooms');
@@ -1148,7 +1169,6 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
     at(34400, () => addRoom('Degen Hub','Open · 312 members','',0));
     at(35100, () => addRoom('Whale Council','1M+ only · 41 members','',1));
 
-    /* 07 THEMES */
     at(36400, () => {
       setCap(6);
       pane('p-chat');
@@ -1172,7 +1192,6 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
       setTheme('original');
     });
 
-    /* 08 STREAKS + MODS */
     at(45900, () => {
       setCap(7);
       pane('p-chat');
@@ -1206,7 +1225,6 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
       toast('Announcement posted');
     });
 
-    /* CTA */
     at(52400, () => {
       stage.dataset.mode = 'cta';
       setTheme('original');
@@ -1214,7 +1232,6 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
     });
   }
 
-  /* ── Reset ── */
   function resetDom(){
     stage.dataset.mode = 'intro';
     setTheme('original');
@@ -1248,7 +1265,6 @@ html,body{height:100%;background:#0a0e1a;overflow:hidden;color:#fff;
     run();
   }
 
-  /* ── Layout ── */
   function fit(){
     const land = stage.dataset.ratio === 'land';
     const W = land ? 1280 : 720;
