@@ -1,0 +1,42 @@
+name: Render Promo MP4
+on: workflow_dispatch
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Install Playwright + Chromium
+        run: |
+          npm init -y
+          npm install playwright
+          npx playwright install --with-deps chromium
+
+      - name: Record the page
+        run: node render.js
+
+      - name: Convert to MP4
+        run: |
+          WEBM=$(find raw -name "*.webm" | head -1)
+          ffmpeg -y -i "$WEBM" \
+            -vf "scale=1920:1080:flags=lanczos" \
+            -c:v libx264 -preset slow -crf 16 \
+            -pix_fmt yuv420p -movflags +faststart \
+            promo.mp4
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: promo-video
+          path: promo.mp4
+          retention-days: 30
